@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Assessment Recommendation Engine</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 50px;
+      background-color: #f4f4f4;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    li {
+      padding: 8px;
+      background-color: #eee;
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Assessment Recommendation Engine</h1>
+    <input type="text" id="query" placeholder="Type a topic (e.g., math, leadership)" />
+    <button onclick="getRecommendations()">Get Recommendations</button>
+    <ul id="recommendations"></ul>
+    <p id="error" style="color:red;"></p>
+  </div>
+
+  <script>
+    async function getRecommendations() {
+      const query = document.getElementById("query").value.trim();
+      const list = document.getElementById("recommendations");
+      const error = document.getElementById("error");
+      list.innerHTML = "";
+      error.textContent = "";
+
+      if (!query) {
+        error.textContent = "Please enter a query.";
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://127.0.0.1:8000/recommend?query=${encodeURIComponent(query)}`);
+        const data = await response.json();
+        if (data.recommendations.length === 0) {
+          list.innerHTML = "<li>No recommendations found.</li>";
+        } else {
+          data.recommendations.forEach(rec => {
+            const li = document.createElement("li");
+            li.textContent = rec;
+            list.appendChild(li);
+          });
+        }
+      } catch (err) {
+        error.textContent = "Something went wrong. Try again.";
+      }
+    }
+  </script>
+</body>
+</html>
