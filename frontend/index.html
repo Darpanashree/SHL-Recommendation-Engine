@@ -66,6 +66,9 @@
 
       try {
         const response = await fetch(`http://127.0.0.1:8000/recommend?query=${encodeURIComponent(query)}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
         if (data.recommendations.length === 0) {
           list.innerHTML = "<li>No recommendations found.</li>";
@@ -77,6 +80,7 @@
           });
         }
       } catch (err) {
+        console.error("Error fetching recommendations:", err);
         error.textContent = "Something went wrong. Try again.";
       }
     }
